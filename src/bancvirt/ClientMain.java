@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author david
  */
-public class Main {
+public class ClientMain {
 
     /**
      * @param args the command line arguments
@@ -32,9 +32,9 @@ public class Main {
             System.out.println("TID: "+ tId);
         } catch (RemoteException ex) {
             System.out.println("Error al conectarse al objeto remoto");
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotBoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

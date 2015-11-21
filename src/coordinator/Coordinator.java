@@ -7,6 +7,7 @@ package coordinator;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 /**
  *
@@ -16,6 +17,7 @@ public class Coordinator extends UnicastRemoteObject  implements ICoordinator {
     public final static String COORDINATOR_NAME="Coordinator";
     
     private Long totalTransactions; // temporal, solo para efectos de prueba
+    private HashMap<Long,Transaction> transactions;
     
     
     public Coordinator()throws RemoteException{
@@ -24,16 +26,20 @@ public class Coordinator extends UnicastRemoteObject  implements ICoordinator {
     @Override
     public synchronized Long openTransaction() {
         totalTransactions++;
+        Transaction transaction = new Transaction(totalTransactions);
+        transactions.put(totalTransactions, transaction);
         return totalTransactions;
     }
 
     @Override
     public synchronized Boolean closeTransaction(Long tId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Transaction closed = transactions.get(tId);
+        return false;
     }
 
     @Override
     public synchronized Boolean abortTransaction(Long tid) {
+        Transaction closed = transactions.get(tid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

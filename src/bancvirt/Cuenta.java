@@ -9,6 +9,7 @@ package bancvirt;
  *
  * @author esparratacus
  */
-public class Cuenta extends Recurso {
-    
+public abstract class Cuenta extends Recurso {
+   
 }
+    

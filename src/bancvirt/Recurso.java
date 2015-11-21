@@ -5,10 +5,16 @@
  */
 package bancvirt;
 
+import java.io.Serializable;
+
 /**
  *
  * @author esparratacus
  */
-public abstract class Recurso implements IRollbackable,IService,ICommitable {
+public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable {
+    protected String resourceId;
+    
+    public abstract String getResourceId();
+    
     
 }

@@ -5,18 +5,26 @@
  */
 package coordinator;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author david
  */
 public class Transaction {
-    Long tId;
+    private Long tId;
+    private HashSet<String> affectedResources;
 
     public Long gettId() {
         return tId;
     }
 
     public void settId(Long tId) {
+        this.tId = tId;
+    }
+
+    public Transaction(Long tId) {
         this.tId = tId;
     }
     
