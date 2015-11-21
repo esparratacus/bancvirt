@@ -11,17 +11,17 @@ package bancvirt;
  */
 public class Debito extends Tarjeta{
 
-    @Override
+
     public boolean rollback() {
         return true; //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+
     public boolean executeService() {
         return true;
     }
 
-    @Override
+
     public boolean commit() {
         return true;
     }
