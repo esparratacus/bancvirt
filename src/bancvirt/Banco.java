@@ -117,12 +117,12 @@ public class Banco extends UnicastRemoteObject implements IBanco {
             case BANCO_AHORRO:
                 System.out.println("Van a depositar");
                 try{
-                    Thread.sleep(3000);
+                    Thread.sleep(10000);
                 }catch(Exception e){
                     
                 }
                 Recurso recurso = darRecurso(BANCO_AHORRO, cliente);
-                return recurso.abonar(monto);
+                return recurso.abonar(monto, tId);
             case BANCO_CORRIENTE:
                 break;
             case TARJETA_AHORROS:

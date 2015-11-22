@@ -10,6 +10,6 @@ package bancvirt;
  * @author esparratacus
  */
 public interface IService {
-    public Long abonar(Long cantidad);
-    public Long retirar(Long cantidad);
+    public Long abonar(Long cantidad, Long tId);
+    public Long retirar(Long cantidad, Long tId);
 }

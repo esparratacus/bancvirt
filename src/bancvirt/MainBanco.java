@@ -28,13 +28,13 @@ public class MainBanco {
             Banco banco;
             try (Scanner sc = new Scanner(System.in)) {
                 System.out.println("Tipo de banco");
-                idBanco = sc.nextLine();
-                banco = new Banco(idBanco);
-                banco.setTipo(idBanco);
+                //idBanco = sc.nextLine();
+                banco = new Banco(Banco.BANCO_AHORRO);
+                banco.setTipo(Banco.BANCO_AHORRO);
             }
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-            registry.rebind(idBanco, banco);
-            System.out.println("Banco " + idBanco + " corriendo");
+            registry.rebind(Banco.BANCO_AHORRO, banco);
+            System.out.println("Banco " + Banco.BANCO_AHORRO + " corriendo");
         } catch (RemoteException ex) {
             Logger.getLogger(MainBanco.class.getName()).log(Level.SEVERE, null, ex);
         }

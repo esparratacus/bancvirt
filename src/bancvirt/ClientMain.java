@@ -55,10 +55,11 @@ public class ClientMain {
             char[] contra = "david".toCharArray();
             String idRecurso = "";
             String accion = "";
-            Long tId = coordinador.openTransaction(cliente, contra);
+            long tId = coordinador.openTransaction(cliente, contra);
             String opcion = "";
             do{
                 opcion = menu();
+                System.out.println("TID: "+ tId);
                 switch(opcion){
                     case "1":
                         idRecurso = Banco.BANCO_AHORRO;
@@ -73,7 +74,7 @@ public class ClientMain {
                     case "1":
                         IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
                         Long saldoActual = banco.depositar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
-                        System.out.println("Su nuevo saldo es de" + saldoActual);
+                        System.out.println("Su nuevo saldo es de " + saldoActual);
                         break;
                     case "2":
                         //retiro
@@ -81,7 +82,7 @@ public class ClientMain {
                 }    
                 
             }while(!opcion.equals("5"));
-            System.out.println("TID: "+ tId);
+            
         } catch (RemoteException ex) {
             System.out.println("Error al conectarse al objeto remoto");
             Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);

@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import bloqueo.Bloqueo;
 
 /**
  *
@@ -69,7 +70,7 @@ public class Ahorro extends Cuenta {
     }
     @Override
     public String getResourceId() {
-        return ACCOUNT_RESOURCE_NAME+client.getId();
+        return ACCOUNT_RESOURCE_NAME + client.getId();
     }
 
     @Override
@@ -103,8 +104,8 @@ public class Ahorro extends Cuenta {
     }
 
     @Override
-    public Long abonar(Long cantidad) {
-        lock.writeLock().lock();
+    public Long abonar(Long cantidad, Long tId) {
+        bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
         boolean ok = false;
         try {
             balance += cantidad;
@@ -112,13 +113,13 @@ public class Ahorro extends Cuenta {
         }catch(Exception e){
             ok = false;
         }finally {
-            lock.writeLock().unlock();
+            bloqueo.libera(tId);
             return ok? balance : null;
         }
     }
 
     @Override
-    public Long retirar(Long cantidad) {
+    public Long retirar(Long cantidad, Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
