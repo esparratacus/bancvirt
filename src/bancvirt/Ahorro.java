@@ -132,7 +132,23 @@ public class Ahorro extends Cuenta {
 
     @Override
     public Long retirar(Long cantidad, Long tId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
+        boolean ok = false;
+        try {
+            if(balance - cantidad >= 0){
+               balance -= cantidad;
+               ok = true;
+                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
+                ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
+                coordinador.addResource(tId, getResourceId());
+            }
+ 
+        }catch(Exception e){
+            e.printStackTrace();
+            ok = false;
+        }finally {
+            return ok? balance : null;
+        }
     }
 
    

@@ -52,8 +52,11 @@ public class ClientMain {
         try {
             Registry myRegistry = LocateRegistry.getRegistry("127.0.0.1", 1099);
             ICoordinator coordinador = (ICoordinator) myRegistry.lookup(Coordinator.COORDINATOR_NAME);
-            String cliente = "1020";
-            char[] contra = "david".toCharArray();
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Ingrese su id de cliente");
+            String cliente = sc.next();
+            System.out.println("Ingrese contrasenia");
+            char[] contra = sc.next().toCharArray();
             String idRecurso = "";
             String accion = "";
             long tId = coordinador.openTransaction(cliente, contra);
@@ -79,16 +82,18 @@ public class ClientMain {
                 String escoge = escoge();
                 System.out.println("Ingresa el monto");
                 String monto = "";
-                Scanner sc = new Scanner(System.in);
-                monto = sc.next();
+                monto = sc.next();IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
+                
                 switch(escoge){
-                    case "1":
-                        IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
+                    case "1": 
                         Long saldoActual = banco.depositar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
                         System.out.println("Su nuevo saldo es de " + saldoActual);
                         break;
-                    case "2":
-                        //retiro
+                    case "2":  
+                        Long saldoActualRetiro = banco.retirar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
+                        System.out.println("Su nuevo saldo es de " + saldoActualRetiro);
+                        break;
+                    default:
                         break;
                         
                     

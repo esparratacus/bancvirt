@@ -131,11 +131,6 @@ public class Banco extends UnicastRemoteObject implements IBanco {
         switch (tipoR) {
             case BANCO_AHORRO:
                 System.out.println("Van a depositar");
-                try{
-                    Thread.sleep(1000);
-                }catch(Exception e){
-                    
-                }
                 Recurso recurso = darRecurso(BANCO_AHORRO, cliente);
                 return recurso.abonar(monto, tId);
             case BANCO_CORRIENTE:
@@ -151,10 +146,12 @@ public class Banco extends UnicastRemoteObject implements IBanco {
 
     @Override
     public Long retirar(String idUsuario, String tipoTransaccion, Long monto, Long tId) throws RemoteException {
+        Client cliente = clientes.get(idUsuario);
         switch (tipo) {
             case BANCO_AHORRO:
-
-                break;
+                System.out.println("Van a depositar");
+                Recurso recurso = darRecurso(BANCO_AHORRO, cliente);
+                return recurso.retirar(monto, tId);
             case BANCO_CORRIENTE:
                 break;
             case TARJETA_AHORROS:
