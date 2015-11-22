@@ -5,10 +5,21 @@
  */
 package bancvirt;
 
+import java.io.Serializable;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  *
  * @author esparratacus
  */
-public abstract class Recurso implements IRollbackable,IService,ICommitable {
+public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable {
+    protected String resourceId;
+    protected ReadWriteLock lock;
+    public Recurso(){
+        lock = new ReentrantReadWriteLock();
+    }
+    public abstract String getResourceId();
+    
     
 }

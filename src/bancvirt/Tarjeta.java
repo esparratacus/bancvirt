@@ -9,6 +9,8 @@ package bancvirt;
  *
  * @author esparratacus
  */
-public class Tarjeta extends Recurso{
+public abstract class Tarjeta extends Recurso{
+    
+    protected Long saldo;
     
 }

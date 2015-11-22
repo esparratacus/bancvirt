@@ -11,19 +11,33 @@ package bancvirt;
  */
 public class Debito extends Tarjeta{
 
+
+    
+
+  
     @Override
-    public boolean rollback() {
-        return true; //To change body of generated methods, choose Tools | Templates.
+    public Boolean commit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean executeService() {
-        return true;
+    public String getResourceId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean commit() {
-        return true;
+    public Boolean rollback() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Long abonar(Long cantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Long retirar(Long cantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

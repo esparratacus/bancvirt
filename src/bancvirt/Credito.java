@@ -11,19 +11,39 @@ package bancvirt;
  */
 public class Credito extends Tarjeta {
 
-    @Override
-    public boolean rollback() {
-        return true;
-    }
 
-    @Override
+   
+
+
     public boolean executeService() {
         return true; //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean commit() {
-       return true; //To change body of generated methods, choose Tools | Templates.
+    public Boolean commit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public String getResourceId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean rollback() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Long abonar(Long cantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Long retirar(Long cantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+   
     
 }
