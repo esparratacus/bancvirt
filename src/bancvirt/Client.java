@@ -12,9 +12,49 @@ import java.io.Serializable;
  * @author david
  */
 public class Client implements Serializable{
+    
+    
     private String name;
     private char[] pasword;
     private String id;
+    private Ahorro ahorro;
+    private Corriente corriente;
+    private Credito credito;
+    private Debito debito;
+
+    public Debito getDebito() {
+        return debito;
+    }
+
+    public void setDebito(Debito debito) {
+        this.debito = debito;
+    }
+    
+    public Ahorro getAhorro() {
+        return ahorro;
+    }
+
+    public void setAhorro(Ahorro ahorro) {
+        this.ahorro = ahorro;
+    }
+
+    public Corriente getCorriente() {
+        return corriente;
+    }
+
+    public void setCorriente(Corriente corriente) {
+        this.corriente = corriente;
+    }
+
+    public Credito getCredito() {
+        return credito;
+    }
+
+    public void setCredito(Credito credito) {
+        this.credito = credito;
+    }
+    
+    
 
     public String getName() {
         return name;
@@ -47,8 +87,5 @@ public class Client implements Serializable{
         this.pasword = pasword;
         this.id = id;
     }
-    
-    public Client(){
-        
-    }
+   
 }

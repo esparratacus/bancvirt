@@ -42,6 +42,7 @@ public class Ahorro extends Cuenta {
     }
     
     public Ahorro(){
+        super();
         balance = new Long(0);
     }
     @Override
@@ -99,6 +100,26 @@ public class Ahorro extends Cuenta {
             }
          
         }
+    }
+
+    @Override
+    public Long abonar(Long cantidad) {
+        lock.writeLock().lock();
+        boolean ok = false;
+        try {
+            balance += cantidad;
+            ok = true;
+        }catch(Exception e){
+            ok = false;
+        }finally {
+            lock.writeLock().unlock();
+            return ok? balance : null;
+        }
+    }
+
+    @Override
+    public Long retirar(Long cantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

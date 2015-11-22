@@ -10,6 +10,8 @@ package bancvirt;
  * @author esparratacus
  */
 public abstract class Cuenta extends Recurso {
-   
+   public Cuenta(){
+       super();
+   }
 }
     

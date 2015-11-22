@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  */
 public interface ICoordinator extends Remote{
     
-    public Long openTransaction() throws RemoteException;
+    public Long openTransaction(String username, char[] password) throws RemoteException;
     public Boolean closeTransaction(Long tId) throws RemoteException;
     public Boolean abortTransaction(Long tid) throws RemoteException;
     

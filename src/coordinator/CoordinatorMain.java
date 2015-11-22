@@ -20,7 +20,7 @@ public class CoordinatorMain {
     private void start(){
         try {
             Registry registry = LocateRegistry.createRegistry(1099);
-            registry.rebind(Coordinator.COORDINATOR_NAME, new Coordinator());
+            registry.rebind(Coordinator.COORDINATOR_NAME, new Coordinator(registry));
             System.out.println("Service running");
         } catch (RemoteException ex) {
             Logger.getLogger(CoordinatorMain.class.getName()).log(Level.SEVERE, null, ex);

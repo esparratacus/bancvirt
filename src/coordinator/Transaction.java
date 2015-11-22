@@ -4,17 +4,13 @@
  * and open the template in the editor.
  */
 package coordinator;
-
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author david
  */
 public class Transaction {
     private Long tId;
-    private HashSet<String> affectedResources;
+
 
     public Long gettId() {
         return tId;
