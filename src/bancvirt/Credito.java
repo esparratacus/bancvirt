@@ -12,15 +12,12 @@ package bancvirt;
 public class Credito extends Tarjeta {
 
 
-   
-
-
     public boolean executeService() {
         return true; //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Boolean commit() {
+    public Boolean commit(Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -30,20 +27,20 @@ public class Credito extends Tarjeta {
     }
 
     @Override
-    public Boolean rollback() {
+    public Boolean rollback(Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Long abonar(Long cantidad) {
+    public Long abonar(Long cantidad, Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Long retirar(Long cantidad) {
+    public Long retirar(Long cantidad, Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-   
+ 
     
 }

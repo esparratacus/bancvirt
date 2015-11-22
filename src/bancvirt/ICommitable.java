@@ -10,5 +10,5 @@ package bancvirt;
  * @author esparratacus
  */
 public interface ICommitable {
-    public Boolean commit();
+    public Boolean commit(Long tId);
 }

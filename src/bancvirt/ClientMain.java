@@ -28,7 +28,8 @@ public class ClientMain {
         System.out.println("2. corriente");
         System.out.println("3. visa");
         System.out.println("4. master card");
-        System.out.println("5. salir");
+        System.out.println("5. abortar");
+        System.out.println("6. Salir");
         String retorno;
         Scanner sc = new Scanner(System.in);
         retorno = sc.nextLine();
@@ -51,37 +52,55 @@ public class ClientMain {
         try {
             Registry myRegistry = LocateRegistry.getRegistry("127.0.0.1", 1099);
             ICoordinator coordinador = (ICoordinator) myRegistry.lookup(Coordinator.COORDINATOR_NAME);
-            String cliente = "1020";
-            char[] contra = "david".toCharArray();
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Ingrese su id de cliente");
+            String cliente = sc.next();
+            System.out.println("Ingrese contrasenia");
+            char[] contra = sc.next().toCharArray();
             String idRecurso = "";
             String accion = "";
-            Long tId = coordinador.openTransaction(cliente, contra);
+            long tId = coordinador.openTransaction(cliente, contra);
             String opcion = "";
             do{
                 opcion = menu();
+                System.out.println("TID: "+ tId);
                 switch(opcion){
                     case "1":
                         idRecurso = Banco.BANCO_AHORRO;
+                        break;
+                    case "5":
+                        coordinador.abortTransaction(tId);
+                        System.out.println("Indeciso");
+                        System.exit(0);
+                        break;
+                    case "6":
+                        coordinador.closeTransaction(tId);
+                        System.out.println("Gracias por venir :) ");
+                        System.exit(0);
                         break;
                 }
                 String escoge = escoge();
                 System.out.println("Ingresa el monto");
                 String monto = "";
-                Scanner sc = new Scanner(System.in);
-                monto = sc.next();
+                monto = sc.next();IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
+                
                 switch(escoge){
-                    case "1":
-                        IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
+                    case "1": 
                         Long saldoActual = banco.depositar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
-                        System.out.println("Su nuevo saldo es de" + saldoActual);
+                        System.out.println("Su nuevo saldo es de " + saldoActual);
                         break;
-                    case "2":
-                        //retiro
+                    case "2":  
+                        Long saldoActualRetiro = banco.retirar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
+                        System.out.println("Su nuevo saldo es de " + saldoActualRetiro);
                         break;
+                    default:
+                        break;
+                        
+                    
                 }    
                 
             }while(!opcion.equals("5"));
-            System.out.println("TID: "+ tId);
+            
         } catch (RemoteException ex) {
             System.out.println("Error al conectarse al objeto remoto");
             Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);

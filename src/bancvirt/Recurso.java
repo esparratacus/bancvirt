@@ -5,6 +5,7 @@
  */
 package bancvirt;
 
+import bloqueo.Bloqueo;
 import java.io.Serializable;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -13,12 +14,29 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author esparratacus
  */
-public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable {
+public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable, IConsumable {
     protected String resourceId;
     protected ReadWriteLock lock;
+    protected Bloqueo bloqueo;
+
+    public final Bloqueo getBloqueo() {
+        return bloqueo;
+    }
+
+    public final void setBloqueo(Bloqueo bloqueo) {
+        this.bloqueo = bloqueo;
+    }
+    
     public Recurso(){
         lock = new ReentrantReadWriteLock();
+        bloqueo = new Bloqueo(this);
     }
+    
+    @Override
+    public final Boolean canConsume(Long tId){
+       return bloqueo.getIdTransaccionActual().equals(tId);
+    }
+    
     public abstract String getResourceId();
     
     

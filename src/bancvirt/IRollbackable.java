@@ -10,5 +10,5 @@ package bancvirt;
  * @author esparratacus
  */
 public interface IRollbackable {
-    public Boolean rollback();
+    public Boolean rollback(Long tId);
 }

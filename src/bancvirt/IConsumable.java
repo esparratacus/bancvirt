@@ -7,15 +7,8 @@ package bancvirt;
 
 /**
  *
- * @author esparratacus
+ * @author sala_bd
  */
-public class BancVirt {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
-    
+public interface IConsumable {
+    public Boolean canConsume(Long tId);
 }

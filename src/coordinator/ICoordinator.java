@@ -17,5 +17,7 @@ public interface ICoordinator extends Remote{
     public Long openTransaction(String username, char[] password) throws RemoteException;
     public Boolean closeTransaction(Long tId) throws RemoteException;
     public Boolean abortTransaction(Long tid) throws RemoteException;
+    public Boolean addResource(Long tId, String resourceId) throws RemoteException;
+    
     
 }
