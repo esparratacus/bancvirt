@@ -7,8 +7,8 @@ package bancvirt;
 
 /**
  *
- * @author esparratacus
+ * @author sala_bd
  */
-public interface ICommitable {
-    public Boolean commit(Long tId);
+public interface IConsumable {
+    public Boolean canConsume(Long tId);
 }

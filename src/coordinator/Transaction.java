@@ -4,13 +4,37 @@
  * and open the template in the editor.
  */
 package coordinator;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
 /**
  *
  * @author david
  */
 public class Transaction {
     private Long tId;
+    private Set<String> recursosAfectados;
+    private String username;
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public Set<String> getRecursosAfectados() {
+        return recursosAfectados;
+    }
+
+    public void setRecursosAfectados(Set<String> recursosAfectados) {
+        this.recursosAfectados = recursosAfectados;
+    }
+
+   
 
     public Long gettId() {
         return tId;
@@ -22,10 +46,12 @@ public class Transaction {
 
     public Transaction(Long tId) {
         this.tId = tId;
+        recursosAfectados = new HashSet<>();
     }
     
     
     public Transaction(){
+        recursosAfectados = new HashSet<>();
         
     }
 }

@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author esparratacus
  */
-public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable {
+public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable, IConsumable {
     protected String resourceId;
     protected ReadWriteLock lock;
     protected Bloqueo bloqueo;
@@ -32,6 +32,10 @@ public abstract class Recurso implements IRollbackable,IService,ICommitable, Ser
         bloqueo = new Bloqueo(this);
     }
     
+    @Override
+    public final Boolean canConsume(Long tId){
+       return bloqueo.getIdTransaccionActual().equals(tId);
+    }
     
     public abstract String getResourceId();
     

@@ -28,7 +28,8 @@ public class ClientMain {
         System.out.println("2. corriente");
         System.out.println("3. visa");
         System.out.println("4. master card");
-        System.out.println("5. salir");
+        System.out.println("5. abortar");
+        System.out.println("6. Salir");
         String retorno;
         Scanner sc = new Scanner(System.in);
         retorno = sc.nextLine();
@@ -64,6 +65,16 @@ public class ClientMain {
                     case "1":
                         idRecurso = Banco.BANCO_AHORRO;
                         break;
+                    case "5":
+                        coordinador.abortTransaction(tId);
+                        System.out.println("Indeciso");
+                        System.exit(0);
+                        break;
+                    case "6":
+                        coordinador.closeTransaction(tId);
+                        System.out.println("Gracias por venir :) ");
+                        System.exit(0);
+                        break;
                 }
                 String escoge = escoge();
                 System.out.println("Ingresa el monto");
@@ -79,6 +90,8 @@ public class ClientMain {
                     case "2":
                         //retiro
                         break;
+                        
+                    
                 }    
                 
             }while(!opcion.equals("5"));

@@ -5,20 +5,32 @@
  */
 package bloqueo;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  *
  * @author sala_bd
  */
-public class Bloqueo {
+public class Bloqueo implements Serializable{
 
     public final static String LECTURA = "lectura";
     public final static String ESCRITURA = "escritura";
 
     private Object objeto;
     private HashSet<Long> propietarios;
-    private String tipoBloqueo;
+    private volatile String tipoBloqueo;
+    private volatile Long idTransaccionActual;
+
+    public Long getIdTransaccionActual() {
+        return idTransaccionActual;
+    }
+
+    public void setIdTransaccionActual(Long idTransaccionActual) {
+        this.idTransaccionActual = idTransaccionActual;
+    }
+    
+    
 
     public void promover() {
         if (tipoBloqueo.equals(LECTURA)) {
@@ -29,11 +41,7 @@ public class Bloqueo {
     }
 
     public boolean conflicto(String estadoActual, String nuevo, Long tId) {
-        System.out.println("Para la transacción "+tId);
-        System.out.println("Propietarios");
-        for (Long propietario : propietarios) {
-            System.out.println("    "+propietario); 
-        }
+        
         if (estadoActual == null) {
             System.out.println("Es estado actual es null");
             return false;
@@ -91,6 +99,8 @@ public class Bloqueo {
                 e.printStackTrace();
             }
         }
+        
+        idTransaccionActual = idTransacccion;
         if (propietarios.isEmpty()) {
             propietarios.add(idTransacccion);
             tipoBloqueo = nuevo;
@@ -106,8 +116,11 @@ public class Bloqueo {
     }
     
     public synchronized void libera(Long tId){
+        System.out.println("Se va a liberar el recurso");
         propietarios.remove(tId);
         tipoBloqueo = null;
+        
+        idTransaccionActual = null;
         notifyAll();
     }
 

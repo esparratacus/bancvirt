@@ -12,7 +12,7 @@ package bancvirt;
 public class Corriente extends Cuenta {
 
     @Override
-    public Boolean commit() {
+    public Boolean commit(Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -22,7 +22,7 @@ public class Corriente extends Cuenta {
     }
 
     @Override
-    public Boolean rollback() {
+    public Boolean rollback(Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

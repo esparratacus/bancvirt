@@ -14,6 +14,10 @@ import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import bloqueo.Bloqueo;
+import coordinator.Coordinator;
+import coordinator.ICoordinator;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 /**
  *
@@ -22,7 +26,7 @@ import bloqueo.Bloqueo;
 public class Ahorro extends Cuenta {
     
     
-    public final static String ACCOUNT_RESOURCE_NAME="ahorro_";
+    
     private Long balance;
     private Client client;
 
@@ -47,7 +51,7 @@ public class Ahorro extends Cuenta {
         balance = new Long(0);
     }
     @Override
-    public Boolean commit() {
+    public Boolean commit(Long tId) {
         FileOutputStream fout = null;
         try {
             fout = new FileOutputStream(getResourceId());
@@ -55,26 +59,30 @@ public class Ahorro extends Cuenta {
             oos.writeObject(this);
             oos.close();
             fout.close();
+            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         } catch (IOException ex) {
+            ex.printStackTrace();
             return false;
         } finally {
             try {
                 fout.close();
             } catch (IOException ex) {
+                ex.printStackTrace();
                 return false;
             }
         }
     }
     @Override
     public String getResourceId() {
-        return ACCOUNT_RESOURCE_NAME + client.getId();
+        return Banco.BANCO_AHORRO+ "_" + client.getId();
     }
 
     @Override
-    public Boolean rollback() {
+    public Boolean rollback(Long tId) {
         FileInputStream fos = null;
         try {
             fos = new FileInputStream(getResourceId());
@@ -84,6 +92,7 @@ public class Ahorro extends Cuenta {
             this.setClient(nuevo.getClient());
             ois.close();
             fos.close();
+            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Ahorro.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,10 +119,13 @@ public class Ahorro extends Cuenta {
         try {
             balance += cantidad;
             ok = true;
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
+            ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
+            coordinador.addResource(tId, getResourceId());
         }catch(Exception e){
+            e.printStackTrace();
             ok = false;
         }finally {
-            bloqueo.libera(tId);
             return ok? balance : null;
         }
     }
@@ -122,5 +134,6 @@ public class Ahorro extends Cuenta {
     public Long retirar(Long cantidad, Long tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+   
 }

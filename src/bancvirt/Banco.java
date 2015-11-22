@@ -6,6 +6,7 @@
 package bancvirt;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,17 +27,30 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     public final static String ABONO = "abono";
     public final static String RETIRO = "retiro";
 
-    /**
-     * Representa el arreglo de todos los servicios que puede ofrecer el banco
-     */
-    public static enum SERVICIOS {
-
-        BANCO_AHORRO,
-        BANCO_CORRIENTE,
-        TARJETA_AHORROS,
-        TARJETA_CORRIENTE
+    @Override
+    public Boolean canCommit(String idUsuario, String tipo, Long tID)throws RemoteException {
+        Client cliente = clientes.get(idUsuario);
+        Recurso r = darRecurso(tipo, cliente);
+        return r.canConsume(tID);
     }
 
+    @Override
+    public Boolean commit(String idUsuario, String tipo, Long tID) throws RemoteException{
+        Client cliente = clientes.get(idUsuario);
+        Recurso r = darRecurso(tipo, cliente);
+        return r.commit(tID); 
+    }
+    @Override
+    public Boolean rollback(String idUsuario, String tipo, Long tID) throws RemoteException{
+        System.out.println("id usuario " + idUsuario);
+        Client cliente = clientes.get(idUsuario);
+       
+        Recurso r = darRecurso(tipo, cliente);
+        
+        return r.rollback(tID);
+    }
+
+  
     public String getTipo() {
         return tipo;
     }
@@ -67,6 +81,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 Ahorro oneAhorro = new Ahorro();
                 oneAhorro.setBalance(new Long(100));
                 one.setAhorro(oneAhorro);
+                oneAhorro.setClient(one);
                 System.out.println("Cargados los elementos de ahorro");
                 break;
             case BANCO_CORRIENTE:
@@ -117,7 +132,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
             case BANCO_AHORRO:
                 System.out.println("Van a depositar");
                 try{
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
                 }catch(Exception e){
                     
                 }
