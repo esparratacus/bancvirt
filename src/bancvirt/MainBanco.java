@@ -5,7 +5,6 @@
  */
 package bancvirt;
 
-import coordinator.Coordinator;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -27,14 +26,17 @@ public class MainBanco {
             String idBanco;
             Banco banco;
             try (Scanner sc = new Scanner(System.in)) {
-                System.out.println("Tipo de banco");
-                //idBanco = sc.nextLine();
-                banco = new Banco(Banco.BANCO_AHORRO);
-                banco.setTipo(Banco.BANCO_AHORRO);
+                System.out.println("Ingrese el tipo de banco Tipo de banco");
+                for (int i = 0; i < Banco.TIPOS_BANCO.length ; i++) {
+                    System.out.println( (i+1) + ".  " + Banco.TIPOS_BANCO[i]); 
+                }
+                idBanco = sc.nextLine();
+                banco = new Banco(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ]);
+                banco.setTipo(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ]);
             }
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-            registry.rebind(Banco.BANCO_AHORRO, banco);
-            System.out.println("Banco " + Banco.BANCO_AHORRO + " corriendo");
+            registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
+            System.out.println("Banco " + Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1] + " corriendo");
         } catch (RemoteException ex) {
             Logger.getLogger(MainBanco.class.getName()).log(Level.SEVERE, null, ex);
         }

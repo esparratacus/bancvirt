@@ -23,34 +23,32 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     public final static String BANCO_CORRIENTE = "banco corriente";
     public final static String TARJETA_AHORROS = "tarjeta ahorros";
     public final static String TARJETA_CORRIENTE = "tarjeta corriente";
-    
     public final static String ABONO = "abono";
     public final static String RETIRO = "retiro";
+    public final static String[] TIPOS_BANCO = {BANCO_AHORRO, BANCO_CORRIENTE};
 
     @Override
-    public Boolean canCommit(String idUsuario, String tipo, Long tID)throws RemoteException {
+    public Boolean canCommit(String idUsuario, String tipo, Long tID) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         Recurso r = darRecurso(tipo, cliente);
         return r.canConsume(tID);
     }
 
     @Override
-    public Boolean commit(String idUsuario, String tipo, Long tID) throws RemoteException{
+    public Boolean commit(String idUsuario, String tipo, Long tID) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         Recurso r = darRecurso(tipo, cliente);
-        return r.commit(tID); 
+        return r.commit(tID);
     }
+
     @Override
-    public Boolean rollback(String idUsuario, String tipo, Long tID) throws RemoteException{
+    public Boolean rollback(String idUsuario, String tipo, Long tID) throws RemoteException {
         System.out.println("id usuario " + idUsuario);
         Client cliente = clientes.get(idUsuario);
-       
         Recurso r = darRecurso(tipo, cliente);
-        
         return r.rollback(tID);
     }
 
-  
     public String getTipo() {
         return tipo;
     }
@@ -62,7 +60,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     public HashMap<String, Client> getClientes() {
         return clientes;
     }
-    
+
     public Banco(String pTipo) throws RemoteException {
         clientes = new HashMap<>();
         tipo = pTipo;
@@ -85,6 +83,11 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 System.out.println("Cargados los elementos de ahorro");
                 break;
             case BANCO_CORRIENTE:
+                Corriente corriente = new Corriente();
+                corriente.setBalance(new Long(100));
+                one.setCorriente(corriente);
+                corriente.setClient(one);
+                System.out.println("Se han cargado los elementos de corriente");
                 break;
             case TARJETA_AHORROS:
                 break;
@@ -125,42 +128,18 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     @Override
     public Long depositar(String idUsuario, String tipoR, Long monto, Long tId) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
-        if(cliente == null){
-            System.out.println("NO encuentra al mk");
-        }
-        switch (tipoR) {
-            case BANCO_AHORRO:
-                System.out.println("Van a depositar");
-                Recurso recurso = darRecurso(BANCO_AHORRO, cliente);
-                return recurso.abonar(monto, tId);
-            case BANCO_CORRIENTE:
-                break;
-            case TARJETA_AHORROS:
-                break;
-            case TARJETA_CORRIENTE:
-                break;
-        }
+        System.out.println("Van a depositar");
+        Recurso recurso = darRecurso(tipoR, cliente);
+        return recurso.abonar(monto, tId);
 
-        return null;
     }
 
     @Override
     public Long retirar(String idUsuario, String tipoTransaccion, Long monto, Long tId) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
-        switch (tipo) {
-            case BANCO_AHORRO:
-                System.out.println("Van a depositar");
-                Recurso recurso = darRecurso(BANCO_AHORRO, cliente);
-                return recurso.retirar(monto, tId);
-            case BANCO_CORRIENTE:
-                break;
-            case TARJETA_AHORROS:
-                break;
-            case TARJETA_CORRIENTE:
-                break;
-        }
-
-        return null;
+        System.out.println("Van a depositar");
+        Recurso recurso = darRecurso(tipoTransaccion, cliente);
+        return recurso.retirar(monto, tId);
     }
 
 }

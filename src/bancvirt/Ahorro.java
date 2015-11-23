@@ -27,8 +27,7 @@ public class Ahorro extends Cuenta {
     
     
     
-    private Long balance;
-    private Client client;
+    
 
     public Long getBalance() {
         return balance;
@@ -38,6 +37,7 @@ public class Ahorro extends Cuenta {
         this.balance = balance;
     }
 
+    @Override
     public Client getClient() {
         return client;
     }

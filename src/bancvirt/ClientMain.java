@@ -68,6 +68,9 @@ public class ClientMain {
                     case "1":
                         idRecurso = Banco.BANCO_AHORRO;
                         break;
+                    case "2":
+                        idRecurso = Banco.BANCO_CORRIENTE;
+                        break;
                     case "5":
                         coordinador.abortTransaction(tId);
                         System.out.println("Indeciso");
@@ -82,21 +85,21 @@ public class ClientMain {
                 String escoge = escoge();
                 System.out.println("Ingresa el monto");
                 String monto = "";
-                monto = sc.next();IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
+                monto = sc.next();
+                System.out.println("Hago una peticion prar el recruso "+ idRecurso);
+                IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
                 
                 switch(escoge){
                     case "1": 
-                        Long saldoActual = banco.depositar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
+                        Long saldoActual = banco.depositar(cliente, idRecurso, Long.parseLong(monto),tId);
                         System.out.println("Su nuevo saldo es de " + saldoActual);
                         break;
                     case "2":  
-                        Long saldoActualRetiro = banco.retirar(cliente, Banco.BANCO_AHORRO, Long.parseLong(monto),tId);
+                        Long saldoActualRetiro = banco.retirar(cliente, idRecurso, Long.parseLong(monto),tId);
                         System.out.println("Su nuevo saldo es de " + saldoActualRetiro);
                         break;
                     default:
-                        break;
-                        
-                    
+                        break;    
                 }    
                 
             }while(!opcion.equals("5"));
