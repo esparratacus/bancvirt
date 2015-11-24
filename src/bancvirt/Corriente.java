@@ -64,40 +64,51 @@ public class Corriente extends Cuenta {
 @Override
     public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
+        Corriente clon = (Corriente) clone();
+        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        clon.returnToState(tId);
         try {
-            balance += cantidad;
             ok = true;
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-            ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
+            System.out.println("despues de la operacion el clon tiene "+ clon.getBalance());
+            return clon.getBalance();
+            
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
         }finally {
-            return ok? balance : null;
+            return ok? clon.getBalance() : null;
         }
     }
 
     @Override
     public Long retirar(Long cantidad, Transaction tId) {
+        Corriente clon = (Corriente) clone();
+        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        clon.returnToState(tId);
         boolean ok = false;
         try {
-            if(balance - cantidad >= 0){
-               balance -= cantidad;
-               ok = true;
-            }
- 
+            ok = true;
+            return clon.getBalance();
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
         }finally {
-            System.out.println("El balance de la cuenta es de " + balance);
-            return ok? balance : null;
+            return ok? clon.getBalance() : null;
         }
     }
 
     @Override
     public void returnToState(Transaction t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Recuperando transaccion");
+        for (Action action : t.getAcciones()) {
+            if(action.isOperacion() == Action.SUMA){
+                System.out.println("sumo " + action.getCantidad());
+                balance += action.getCantidad();
+            }else{
+                System.out.println("resto " + action.getCantidad());
+                balance -= action.getCantidad();
+            }
+        }
     }
     
 }

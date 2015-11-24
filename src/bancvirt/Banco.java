@@ -81,6 +81,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 oneAhorro.setBalance(new Long(100));
                 one.setAhorro(oneAhorro);
                 oneAhorro.setClient(one);
+                oneAhorro.rollback(new Long(0));
                 System.out.println("Cargados los elementos de ahorro");
                 break;
             case BANCO_CORRIENTE:
@@ -88,6 +89,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 corriente.setBalance(new Long(100));
                 one.setCorriente(corriente);
                 corriente.setClient(one);
+                //corriente.rollback(new Long(0));
                 System.out.println("Se han cargado los elementos de corriente");
                 break;
             case TARJETA_AHORROS:

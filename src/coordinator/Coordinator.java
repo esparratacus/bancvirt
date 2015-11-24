@@ -58,6 +58,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
             System.out.println(bank);
             if (!bank.equals(COORDINATOR_NAME)) {
                 try {
+                    
                     IBanco banco = (IBanco) registry.lookup(bank);
                     valid = banco.iniciarSesion(username, password);
                     if (!valid) {
@@ -103,6 +104,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
                     IBanco banco = (IBanco) registry.lookup(recurso[0]);
                     banco.commit(recurso[1], recurso[0], closed);
                 }
+                transactions.remove(tId);
                 return true;
             }else{
                 abortTransaction(tId);
