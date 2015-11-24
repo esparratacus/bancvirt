@@ -3,20 +3,41 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinator;
+package transaccion;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 /**
  *
  * @author david
  */
-public class Transaction {
+public class Transaction implements Serializable{
     private Long tId;
     private Set<String> recursosAfectados;
     private String username;
+    private Long startTime;
+    private ArrayList<Action> acciones;
+
+    public ArrayList<Action> getAcciones() {
+        return acciones;
+    }
+
+    public void setAcciones(ArrayList<Action> acciones) {
+        this.acciones = acciones;
+    }
+    
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
+    }
+    
 
     public String getUsername() {
         return username;
@@ -47,11 +68,17 @@ public class Transaction {
     public Transaction(Long tId) {
         this.tId = tId;
         recursosAfectados = new HashSet<>();
+        startTime = System.currentTimeMillis();
+        acciones = new ArrayList<>();
+    }
+    public Boolean tienePrioridad(Transaction transaccion){
+        return startTime <= transaccion.getStartTime();
     }
     
     
     public Transaction(){
         recursosAfectados = new HashSet<>();
-        
+        startTime = System.currentTimeMillis();
+        acciones = new ArrayList<>();
     }
 }

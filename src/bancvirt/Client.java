@@ -6,6 +6,7 @@
 package bancvirt;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  *
@@ -87,5 +88,7 @@ public class Client implements Serializable{
         this.pasword = pasword;
         this.id = id;
     }
+    
+    
    
 }

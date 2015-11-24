@@ -5,11 +5,13 @@
  */
 package bancvirt;
 
+import transaccion.Transaction;
+
 /**
  *
  * @author esparratacus
  */
 public interface IService {
-    public Long abonar(Long cantidad, Long tId);
-    public Long retirar(Long cantidad, Long tId);
+    public Long abonar(Long cantidad, Transaction tId);
+    public Long retirar(Long cantidad, Transaction tId);
 }

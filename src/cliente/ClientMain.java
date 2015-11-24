@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bancvirt;
+package cliente;
 
+import bancvirt.Banco;
+import bancvirt.IBanco;
 import coordinator.Coordinator;
 import coordinator.ICoordinator;
 import java.rmi.AccessException;
@@ -87,15 +89,14 @@ public class ClientMain {
                 String monto = "";
                 monto = sc.next();
                 System.out.println("Hago una peticion prar el recruso "+ idRecurso);
-                IBanco banco = (IBanco) myRegistry.lookup(idRecurso);
                 
                 switch(escoge){
                     case "1": 
-                        Long saldoActual = banco.depositar(cliente, idRecurso, Long.parseLong(monto),tId);
+                        Long saldoActual = coordinador.depositar(cliente, idRecurso, Long.parseLong(monto),tId);
                         System.out.println("Su nuevo saldo es de " + saldoActual);
                         break;
                     case "2":  
-                        Long saldoActualRetiro = banco.retirar(cliente, idRecurso, Long.parseLong(monto),tId);
+                        Long saldoActualRetiro = coordinador.retirar(cliente, idRecurso, Long.parseLong(monto),tId);
                         System.out.println("Su nuevo saldo es de " + saldoActualRetiro);
                         break;
                     default:

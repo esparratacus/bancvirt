@@ -5,16 +5,21 @@
  */
 package coordinator;
 
+import transaccion.Transaction;
 import bancvirt.IBanco;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import transaccion.Action;
 
 /**
  *
@@ -23,6 +28,7 @@ import java.util.logging.Logger;
 public class Coordinator extends UnicastRemoteObject implements ICoordinator {
 
     public final static String COORDINATOR_NAME = "Coordinator";
+    public final static String COORDINATOR_IP = "127.0.0.1";
     private Registry registry;
     private Long totalTransactions;
     private HashMap<Long, Transaction> transactions;
@@ -72,14 +78,16 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
 
     @Override
     public synchronized Boolean closeTransaction(Long tId) throws RemoteException {
+        System.out.println("Se manda a cerrar una transaccion");
         Transaction closed = transactions.get(tId);
         Set<String> resources = closed.getRecursosAfectados();
         Boolean listo = true;
         try {
             for (String resource : resources) {
+                System.out.println("Recurso Afectado: " + resource);
                 String[] recurso = resource.split("_");
                 IBanco banco = (IBanco) registry.lookup(recurso[0]);
-                listo = banco.canCommit(recurso[1],recurso[0], tId);
+                listo = banco.canCommit(recurso[1], recurso[0], closed);
                 if (!listo) {
                     abortTransaction(tId);
                     System.out.println("No puede hacer commit");
@@ -87,12 +95,21 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
                 }
 
             }
-            for (String resource : resources) {
-                String[] recurso = resource.split("_");
-                IBanco banco = (IBanco) registry.lookup(recurso[0]);
-                listo = banco.commit(recurso[1],recurso[0], tId);
+
+            // toca validar que una de las transacciones no haya empezado antess
+            if (!hayConflicto(closed)) {
+                for (String resource : resources) {
+                    String[] recurso = resource.split("_");
+                    IBanco banco = (IBanco) registry.lookup(recurso[0]);
+                    banco.commit(recurso[1], recurso[0], closed);
+                }
+                return true;
+            }else{
+                abortTransaction(tId);
             }
+            transactions.remove(tId);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -100,33 +117,97 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
         return true;
     }
 
+    public Boolean hayConflicto(Transaction transaccion) {
+        Iterator it = transactions.entrySet().iterator();
+        Boolean conflicto = false;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Transaction actual = (Transaction) pair.getValue();
+            for (String recurso : transaccion.getRecursosAfectados()) {
+                if (actual.getRecursosAfectados().contains(recurso) && !transaccion.tienePrioridad(actual)) {
+                    System.out.println("Conflicto de " + transaccion.gettId() + " con " + actual.gettId());
+                    return true;
+                }
+            }
+        }
+        return conflicto;
+    }
+
     @Override
     public synchronized Boolean abortTransaction(Long tId) {
-
+        System.out.println("Se pasa a abortar la transaccion");
         Transaction closed = transactions.get(tId);
         Set<String> resources = closed.getRecursosAfectados();
 
-            for (String resource : resources) {
+        for (String resource : resources) {
             try {
                 String[] recurso = resource.split("_");
                 IBanco banco = (IBanco) registry.lookup(recurso[0]);
-                banco.rollback(recurso[1],recurso[0], tId);
+                banco.rollback(recurso[1], recurso[0], closed);
+                transactions.remove(tId);
             } catch (RemoteException ex) {
                 Logger.getLogger(Coordinator.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NotBoundException ex) {
                 Logger.getLogger(Coordinator.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            }
-            return true;
-       
+        }
+        return true;
+
     }
 
     @Override
-    public Boolean addResource(Long tId, String resourceId) throws RemoteException {
+    public Boolean addResource(Long tId, String resourceId, Boolean operacion, Long monto) throws RemoteException {
         Transaction transaccion = transactions.get(tId);
+        Action accion = new Action(resourceId, operacion, monto);
+        transaccion.getAcciones().add(accion);
         transaccion.getRecursosAfectados().add(resourceId);
         return true;
+    }
+
+    @Override
+    public Long depositar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException {
+        /* Buscar al servicio que haga eso y pedirles que se actualicen  */
+        Transaction transaccion = transactions.get(tId);
+        String resourceId = tipo + "_" + idUsuario;
+        addResource(tId, resourceId, Action.SUMA, monto);
+        String[] servicios = registry.list();
+        for (String servicio : servicios) {
+            String patron = "([0-9]*)" + tipo;
+            if (servicio.matches(patron)) {
+                try {
+                    System.out.println("Servicio " + servicio + " cumple con el patron");
+                    IBanco banco = (IBanco) registry.lookup(servicio);
+                    return banco.depositar(idUsuario, tipo, monto, transaccion);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.out.println("servicio " + servicio + " no esta disponible");
+                }
+
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Long retirar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException {
+        Transaction transaccion = transactions.get(tId);
+        String resourceId = tipo + "_" + idUsuario;
+        addResource(tId, resourceId, Action.RESTA, monto);
+        String[] servicios = registry.list();
+        for (String servicio : servicios) {
+            String patron = "([0-9]*)" + tipo;
+            if (servicio.matches(patron)) {
+                try {
+                    IBanco banco = (IBanco) registry.lookup(servicio);
+                    return banco.retirar(idUsuario, tipo, monto, transaccion);
+                } catch (Exception ex) {
+                    System.out.println("servicio " + servicio + " no esta disponible");
+                }
+
+            }
+        }
+        return null;
     }
 
 }

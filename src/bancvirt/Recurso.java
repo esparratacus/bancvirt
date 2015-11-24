@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  *
@@ -18,7 +19,6 @@ import java.io.Serializable;
  */
 public abstract class Recurso implements IRollbackable,IService,ICommitable, Serializable, IConsumable {
     protected String resourceId;
-    protected Bloqueo bloqueo;
     protected Client client;
     protected Long balance;
 
@@ -39,7 +39,6 @@ public abstract class Recurso implements IRollbackable,IService,ICommitable, Ser
             oos.writeObject(this);
             oos.close();
             fout.close();
-            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
@@ -65,25 +64,22 @@ public abstract class Recurso implements IRollbackable,IService,ICommitable, Ser
     }
     
     
-    public final Bloqueo getBloqueo() {
-        return bloqueo;
-    }
 
-    public final void setBloqueo(Bloqueo bloqueo) {
-        this.bloqueo = bloqueo;
-    }
      
     
     public Recurso(){
-        bloqueo = new Bloqueo(this);
         balance = new Long(0);
     }
     
     @Override
     public final Boolean canConsume(Long tId){
-       return bloqueo.getIdTransaccionActual().equals(tId);
+       return true;
     }
     
+    
+    public Recurso clone(){
+        return SerializationUtils.clone(this);
+    }
     public abstract String getResourceId();
     
     

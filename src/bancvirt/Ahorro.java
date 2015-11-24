@@ -18,6 +18,8 @@ import coordinator.Coordinator;
 import coordinator.ICoordinator;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import transaccion.Action;
+import transaccion.Transaction;
 
 /**
  *
@@ -53,13 +55,13 @@ public class Ahorro extends Cuenta {
     @Override
     public Boolean commit(Long tId) {
         FileOutputStream fout = null;
+        System.out.println("se va a commitear a " + getResourceId());
         try {
             fout = new FileOutputStream(getResourceId());
             ObjectOutputStream oos = new ObjectOutputStream(fout);
             oos.writeObject(this);
             oos.close();
             fout.close();
-            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
@@ -92,7 +94,6 @@ public class Ahorro extends Cuenta {
             this.setClient(nuevo.getClient());
             ois.close();
             fos.close();
-            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Ahorro.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,41 +114,52 @@ public class Ahorro extends Cuenta {
     }
 
     @Override
-    public Long abonar(Long cantidad, Long tId) {
-        bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
+    public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
+        Ahorro clon = (Ahorro) clone();
+        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        clon.returnToState(tId);
         try {
-            balance += cantidad;
             ok = true;
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-            ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
-            coordinador.addResource(tId, getResourceId());
+            System.out.println("despues de la operacion el clon tiene "+ clon.getBalance());
+            return clon.getBalance();
+            
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
         }finally {
-            return ok? balance : null;
+            return ok? clon.getBalance() : null;
         }
     }
 
     @Override
-    public Long retirar(Long cantidad, Long tId) {
-       bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
+    public Long retirar(Long cantidad, Transaction tId) {
+        Ahorro clon = (Ahorro) clone();
+        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        clon.returnToState(tId);
         boolean ok = false;
         try {
-            if(balance - cantidad >= 0){
-               balance -= cantidad;
-               ok = true;
-                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-                ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
-                coordinador.addResource(tId, getResourceId());
-            }
- 
+            ok = true;
+            return clon.getBalance();
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
         }finally {
-            return ok? balance : null;
+            return ok? clon.getBalance() : null;
+        }
+    }
+
+    @Override
+    public void returnToState(Transaction t) {
+        System.out.println("Recuperando transaccion");
+        for (Action action : t.getAcciones()) {
+            if(action.isOperacion() == Action.SUMA){
+                System.out.println("sumo " + action.getCantidad());
+                balance += action.getCantidad();
+            }else{
+                System.out.println("resto " + action.getCantidad());
+                balance -= action.getCantidad();
+            }
         }
     }
 

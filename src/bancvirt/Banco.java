@@ -6,10 +6,10 @@
 package bancvirt;
 
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.HashMap;
+import transaccion.Transaction;
 
 /**
  *
@@ -28,25 +28,26 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     public final static String[] TIPOS_BANCO = {BANCO_AHORRO, BANCO_CORRIENTE};
 
     @Override
-    public Boolean canCommit(String idUsuario, String tipo, Long tID) throws RemoteException {
+    public Boolean canCommit(String idUsuario, String tipo, Transaction tID) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         Recurso r = darRecurso(tipo, cliente);
-        return r.canConsume(tID);
+        return r.canConsume(tID.gettId());
     }
 
     @Override
-    public Boolean commit(String idUsuario, String tipo, Long tID) throws RemoteException {
+    public Boolean commit(String idUsuario, String tipo, Transaction tID) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         Recurso r = darRecurso(tipo, cliente);
-        return r.commit(tID);
+        r.returnToState(tID);
+        return r.commit(tID.gettId());
     }
 
     @Override
-    public Boolean rollback(String idUsuario, String tipo, Long tID) throws RemoteException {
+    public Boolean rollback(String idUsuario, String tipo, Transaction tID) throws RemoteException {
         System.out.println("id usuario " + idUsuario);
         Client cliente = clientes.get(idUsuario);
         Recurso r = darRecurso(tipo, cliente);
-        return r.rollback(tID);
+        return r.rollback(tID.gettId());
     }
 
     public String getTipo() {
@@ -126,7 +127,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     }
 
     @Override
-    public Long depositar(String idUsuario, String tipoR, Long monto, Long tId) throws RemoteException {
+    public Long depositar(String idUsuario, String tipoR, Long monto, Transaction tId) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         System.out.println("Van a depositar");
         Recurso recurso = darRecurso(tipoR, cliente);
@@ -135,7 +136,7 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     }
 
     @Override
-    public Long retirar(String idUsuario, String tipoTransaccion, Long monto, Long tId) throws RemoteException {
+    public Long retirar(String idUsuario, String tipoTransaccion, Long monto, Transaction tId) throws RemoteException {
         Client cliente = clientes.get(idUsuario);
         System.out.println("Van a depositar");
         Recurso recurso = darRecurso(tipoTransaccion, cliente);

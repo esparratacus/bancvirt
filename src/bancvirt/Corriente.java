@@ -16,6 +16,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import transaccion.Action;
+import transaccion.Transaction;
 
 /**
  *
@@ -41,7 +43,6 @@ public class Corriente extends Cuenta {
             this.setClient(nuevo.getClient());
             ois.close();
             fos.close();
-            bloqueo.libera(tId);
             return true;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Ahorro.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,15 +62,13 @@ public class Corriente extends Cuenta {
         }
     }
 @Override
-    public Long abonar(Long cantidad, Long tId) {
-        bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
+    public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
         try {
             balance += cantidad;
             ok = true;
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
             ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
-            coordinador.addResource(tId, getResourceId());
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
@@ -79,16 +78,12 @@ public class Corriente extends Cuenta {
     }
 
     @Override
-    public Long retirar(Long cantidad, Long tId) {
-       bloqueo.adquiere(tId, Bloqueo.ESCRITURA);
+    public Long retirar(Long cantidad, Transaction tId) {
         boolean ok = false;
         try {
             if(balance - cantidad >= 0){
                balance -= cantidad;
                ok = true;
-                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
-                ICoordinator coordinador = (ICoordinator) registry.lookup(Coordinator.COORDINATOR_NAME);
-                coordinador.addResource(tId, getResourceId());
             }
  
         }catch(Exception e){
@@ -98,6 +93,11 @@ public class Corriente extends Cuenta {
             System.out.println("El balance de la cuenta es de " + balance);
             return ok? balance : null;
         }
+    }
+
+    @Override
+    public void returnToState(Transaction t) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

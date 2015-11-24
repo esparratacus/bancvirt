@@ -5,10 +5,13 @@
  */
 package bancvirt;
 
+import transaccion.Transaction;
+
 /**
  *
  * @author sala_bd
  */
 public interface IConsumable {
     public Boolean canConsume(Long tId);
+    public void returnToState(Transaction t);
 }

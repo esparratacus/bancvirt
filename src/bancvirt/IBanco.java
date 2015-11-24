@@ -7,6 +7,7 @@ package bancvirt;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import transaccion.Transaction;
 
 /**
  *
@@ -14,9 +15,9 @@ import java.rmi.RemoteException;
  */
 public interface IBanco extends Remote{
     public Boolean iniciarSesion(String idUsuario, char[] contrasenia) throws RemoteException;
-    public Long depositar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException;
-    public Long retirar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException;
-    public Boolean canCommit(String idUsuario, String tipo, Long tID) throws RemoteException;
-    public Boolean commit(String idUsuario, String tipo, Long tID) throws RemoteException;
-    public Boolean rollback(String idUsuario, String tipo, Long tID) throws RemoteException;
+    public Long depositar(String idUsuario, String tipo, Long monto, Transaction tId) throws RemoteException;
+    public Long retirar(String idUsuario, String tipo, Long monto, Transaction tId) throws RemoteException;
+    public Boolean canCommit(String idUsuario, String tipo, Transaction tID) throws RemoteException;
+    public Boolean commit(String idUsuario, String tipo, Transaction tID) throws RemoteException;
+    public Boolean rollback(String idUsuario, String tipo, Transaction tID) throws RemoteException;
 }

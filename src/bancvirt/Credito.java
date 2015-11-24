@@ -5,6 +5,8 @@
  */
 package bancvirt;
 
+import transaccion.Transaction;
+
 /**
  *
  * @author esparratacus
@@ -32,12 +34,17 @@ public class Credito extends Tarjeta {
     }
 
     @Override
-    public Long abonar(Long cantidad, Long tId) {
+    public Long abonar(Long cantidad, Transaction tId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Long retirar(Long cantidad, Long tId) {
+    public Long retirar(Long cantidad, Transaction tId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void returnToState(Transaction t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
