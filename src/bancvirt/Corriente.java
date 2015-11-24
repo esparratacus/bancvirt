@@ -101,12 +101,14 @@ public class Corriente extends Cuenta {
     public void returnToState(Transaction t) {
         System.out.println("Recuperando transaccion");
         for (Action action : t.getAcciones()) {
-            if(action.isOperacion() == Action.SUMA){
-                System.out.println("sumo " + action.getCantidad());
-                balance += action.getCantidad();
-            }else{
-                System.out.println("resto " + action.getCantidad());
-                balance -= action.getCantidad();
+            if (action.getRecursoAfectado().equals(getResourceId())) {
+                if (action.isOperacion() == Action.SUMA) {
+                    System.out.println("sumo " + action.getCantidad());
+                    balance += action.getCantidad();
+                } else {
+                    System.out.println("resto " + action.getCantidad());
+                    balance -= action.getCantidad();
+                }
             }
         }
     }
