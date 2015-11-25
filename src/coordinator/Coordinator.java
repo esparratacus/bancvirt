@@ -5,6 +5,7 @@
  */
 package coordinator;
 
+import bancvirt.Banco;
 import transaccion.Transaction;
 import bancvirt.IBanco;
 import java.rmi.AccessException;
@@ -32,11 +33,33 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     private Registry registry;
     private Long totalTransactions;
     private HashMap<Long, Transaction> transactions;
+    public final static String VISA_IP="";
+    public final static String MASTER_IP="";
+    public final static String AHORRO_IP="";
+    public final static String CORRIENTE_IP="";
 
     public Coordinator() throws RemoteException {
 
     }
 
+    public Registry darRegistryOperacion(String tipo){
+        String ip;
+        switch(tipo){
+                case Banco.BANCO_AHORRO:
+                    ip = AHORRO_IP;
+                    break;
+                case Banco.BANCO_CORRIENTE:
+                    ip = CORRIENTE_IP;
+                    break;
+                case Banco.VISA:
+                    ip = VISA_IP;
+                    break;
+                case Banco.MASTER_CARD:
+                    ip = MASTER_IP;
+                    break;
+        }
+        return null;
+    }
     public Coordinator(Registry registry) throws RemoteException {
         this.registry = registry;
         totalTransactions = new Long(0);

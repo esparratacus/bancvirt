@@ -97,14 +97,14 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 visa.setBalance(new Long(100));
                 one.setVisa(visa);
                 visa.setClient(one);
-                //visa.rollback(new Long(0));
+                visa.rollback(new Long(0));
                 break;
             case MASTER_CARD:
                 MasterCard master = new MasterCard();
                 master.setBalance(new Long(100));
                 one.setMasterCard(master);
                 master.setClient(one);
-                //master.rollback(new Long(0));       
+                master.rollback(new Long(0));       
                 break;
         }
 

@@ -5,6 +5,7 @@
  */
 package coordinator;
 
+import bancvirt.Banco;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -16,6 +17,9 @@ import java.util.logging.Logger;
  * @author david
  */
 public class CoordinatorMain {
+    
+    
+    
     
     private void start(){
         try {

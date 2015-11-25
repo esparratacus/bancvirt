@@ -52,6 +52,7 @@ public class ClientMain {
      */
     public static void main(String[] args) {
         try {
+            System.setProperty("java.rmi.server.hostname", Coordinator.COORDINATOR_IP);
             Registry myRegistry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
             ICoordinator coordinador = (ICoordinator) myRegistry.lookup(Coordinator.COORDINATOR_NAME);
             Scanner sc = new Scanner(System.in);

@@ -24,6 +24,7 @@ public class MainBanco {
      */
     public static void main(String[] args) {
         try {
+          
             String idBanco;
             Banco banco;
             try (Scanner sc = new Scanner(System.in)) {
@@ -36,6 +37,7 @@ public class MainBanco {
                 banco.setTipo(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ]);
             }
             Registry registry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
+           // Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
             System.out.println("Banco " + Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1] + " corriendo");
         } catch (RemoteException ex) {
