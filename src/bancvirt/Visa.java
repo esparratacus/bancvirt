@@ -18,13 +18,19 @@ import transaccion.Transaction;
  *
  * @author esparratacus
  */
-public class Corriente extends Cuenta {
 
- 
+public class Visa extends Tarjeta{
 
+
+    
+    public Visa(){
+        super();
+        balance = new Long(0);
+    }
+  
     @Override
     public String getResourceId() {
-         return Banco.BANCO_CORRIENTE+ "_" + client.getId();
+         return Banco.VISA +  "_" + client.getId();
     }
 
     @Override
@@ -33,7 +39,7 @@ public class Corriente extends Cuenta {
         try {
             fos = new FileInputStream(getResourceId());
             ObjectInputStream ois = new ObjectInputStream(fos);
-            Corriente nuevo = (Corriente) ois.readObject();
+            Visa nuevo = (Visa) ois.readObject();
             this.setBalance(nuevo.getBalance());
             this.setClient(nuevo.getClient());
             ois.close();
@@ -59,14 +65,13 @@ public class Corriente extends Cuenta {
 @Override
     public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
-        Corriente clon = (Corriente) clone();
+        Visa clon = (Visa) clone();
         System.out.println("Se crea un clon con balance "+ clon.getBalance());
         clon.returnToState(tId);
         try {
             ok = true;
             System.out.println("despues de la operacion el clon tiene "+ clon.getBalance());
-            return clon.getBalance();
-            
+            return clon.getBalance();  
         }catch(Exception e){
             e.printStackTrace();
             ok = false;
@@ -77,7 +82,7 @@ public class Corriente extends Cuenta {
 
     @Override
     public Long retirar(Long cantidad, Transaction tId) {
-        Corriente clon = (Corriente) clone();
+        Visa clon = (Visa) clone();
         System.out.println("Se crea un clon con balance "+ clon.getBalance());
         clon.returnToState(tId);
         boolean ok = false;

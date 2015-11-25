@@ -21,11 +21,11 @@ public class Banco extends UnicastRemoteObject implements IBanco {
     private String tipo;
     public final static String BANCO_AHORRO = "bancoahorro";
     public final static String BANCO_CORRIENTE = "banco corriente";
-    public final static String TARJETA_AHORROS = "tarjeta ahorros";
-    public final static String TARJETA_CORRIENTE = "tarjeta corriente";
+    public final static String VISA = "Visa";
+    public final static String MASTER_CARD = "Master Card";
     public final static String ABONO = "abono";
     public final static String RETIRO = "retiro";
-    public final static String[] TIPOS_BANCO = {BANCO_AHORRO, BANCO_CORRIENTE};
+    public final static String[] TIPOS_BANCO = {BANCO_AHORRO, BANCO_CORRIENTE, VISA, MASTER_CARD};
 
     @Override
     public Boolean canCommit(String idUsuario, String tipo, Transaction tID) throws RemoteException {
@@ -89,12 +89,22 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 corriente.setBalance(new Long(100));
                 one.setCorriente(corriente);
                 corriente.setClient(one);
-                //corriente.rollback(new Long(0));
+                corriente.rollback(new Long(0));
                 System.out.println("Se han cargado los elementos de corriente");
                 break;
-            case TARJETA_AHORROS:
+            case VISA:
+                Visa visa = new Visa();
+                visa.setBalance(new Long(100));
+                one.setVisa(visa);
+                visa.setClient(one);
+                //visa.rollback(new Long(0));
                 break;
-            case TARJETA_CORRIENTE:
+            case MASTER_CARD:
+                MasterCard master = new MasterCard();
+                master.setBalance(new Long(100));
+                one.setMasterCard(master);
+                master.setClient(one);
+                //master.rollback(new Long(0));       
                 break;
         }
 
@@ -119,10 +129,10 @@ public class Banco extends UnicastRemoteObject implements IBanco {
                 return cliente.getAhorro();
             case BANCO_CORRIENTE:
                 return cliente.getCorriente();
-            case TARJETA_AHORROS:
-                return cliente.getCredito();
-            case TARJETA_CORRIENTE:
-                return cliente.getDebito();
+            case VISA:
+                return cliente.getVisa();
+            case MASTER_CARD:
+                return cliente.getMasterCard();
             default:
                 return null;
         }
@@ -133,6 +143,11 @@ public class Banco extends UnicastRemoteObject implements IBanco {
         Client cliente = clientes.get(idUsuario);
         System.out.println("Van a depositar");
         Recurso recurso = darRecurso(tipoR, cliente);
+        if(recurso == null){
+            System.out.println("Recurso no encontrado");
+        }else{
+            System.out.println("Encuentra el recurso");
+        }
         return recurso.abonar(monto, tId);
 
     }

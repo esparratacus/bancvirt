@@ -20,14 +20,14 @@ public class Client implements Serializable{
     private String id;
     private Ahorro ahorro;
     private Corriente corriente;
-    private Credito credito;
-    private Debito debito;
+    private MasterCard credito;
+    private Visa debito;
 
-    public Debito getDebito() {
+    public Visa getVisa() {
         return debito;
     }
 
-    public void setDebito(Debito debito) {
+    public void setVisa(Visa debito) {
         this.debito = debito;
     }
     
@@ -47,11 +47,11 @@ public class Client implements Serializable{
         this.corriente = corriente;
     }
 
-    public Credito getCredito() {
+    public MasterCard getMasterCard() {
         return credito;
     }
 
-    public void setCredito(Credito credito) {
+    public void setMasterCard(MasterCard credito) {
         this.credito = credito;
     }
     

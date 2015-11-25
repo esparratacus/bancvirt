@@ -12,8 +12,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     }
 
     @Override
-    public Long openTransaction(String username, char[] password) throws RemoteException {
+    public synchronized Long openTransaction(String username, char[] password) throws RemoteException {
         Boolean valid = false;
         String[] banks = registry.list();
         for (String bank : banks) {
@@ -81,6 +81,9 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     public synchronized Boolean closeTransaction(Long tId) throws RemoteException {
         System.out.println("Se manda a cerrar una transaccion");
         Transaction closed = transactions.get(tId);
+        if(closed == null){
+            throw new RemoteException();
+        }
         Set<String> resources = closed.getRecursosAfectados();
         Boolean listo = true;
         try {
@@ -105,11 +108,14 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
                     banco.commit(recurso[1], recurso[0], closed);
                 }
                 transactions.remove(tId);
+                borrarTransaccionesConflicto(closed);
                 return true;
             }else{
                 abortTransaction(tId);
             }
+            borrarTransaccionesConflicto(closed);
             transactions.remove(tId);
+            
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
@@ -118,10 +124,26 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
         transactions.remove(tId);
         return true;
     }
+    public Set<Transaction> borrarTransaccionesConflicto(Transaction transaccion){
+        System.out.println("Se buscan las transaccions que tengan conflicto");
+        HashSet<Transaction> set = new HashSet<>();
+        Iterator it = transactions.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Transaction actual = (Transaction) pair.getValue();
+            for (String recurso : transaccion.getRecursosAfectados()) {
+                if (actual.getRecursosAfectados().contains(recurso) && transaccion.tienePrioridad(actual)) {
+                    System.out.println("La transaccion " + actual.gettId() + " ya no puede hacer commit ");
+                    set.add(actual);
+                    transactions.remove(actual.gettId());
+                }
+            }
+        }
+        return set;
+    }
 
     public Boolean hayConflicto(Transaction transaccion) {
         Iterator it = transactions.entrySet().iterator();
-        Boolean conflicto = false;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             Transaction actual = (Transaction) pair.getValue();
@@ -132,13 +154,16 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
                 }
             }
         }
-        return conflicto;
+        return false;
     }
 
     @Override
-    public synchronized Boolean abortTransaction(Long tId) {
+    public synchronized Boolean abortTransaction(Long tId)throws RemoteException {
         System.out.println("Se pasa a abortar la transaccion");
         Transaction closed = transactions.get(tId);
+        if(closed == null){
+            throw new RemoteException();
+        }
         Set<String> resources = closed.getRecursosAfectados();
 
         for (String resource : resources) {
@@ -171,6 +196,9 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     public Long depositar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException {
         /* Buscar al servicio que haga eso y pedirles que se actualicen  */
         Transaction transaccion = transactions.get(tId);
+        if(transaccion == null){
+            throw new RemoteException();
+        }
         String resourceId = tipo + "_" + idUsuario;
         addResource(tId, resourceId, Action.SUMA, monto);
         String[] servicios = registry.list();
@@ -194,6 +222,9 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     @Override
     public Long retirar(String idUsuario, String tipo, Long monto, Long tId) throws RemoteException {
         Transaction transaccion = transactions.get(tId);
+        if(transaccion == null){
+            throw new RemoteException();
+        }
         String resourceId = tipo + "_" + idUsuario;
         addResource(tId, resourceId, Action.RESTA, monto);
         String[] servicios = registry.list();

@@ -18,13 +18,16 @@ import transaccion.Transaction;
  *
  * @author esparratacus
  */
-public class Corriente extends Cuenta {
-
- 
-
+public class MasterCard extends Tarjeta {
+    
+    public MasterCard(){
+        super();
+        balance = new Long(0);
+    }
+    
     @Override
     public String getResourceId() {
-         return Banco.BANCO_CORRIENTE+ "_" + client.getId();
+         return Banco.MASTER_CARD+ "_" + client.getId();
     }
 
     @Override
@@ -33,7 +36,7 @@ public class Corriente extends Cuenta {
         try {
             fos = new FileInputStream(getResourceId());
             ObjectInputStream ois = new ObjectInputStream(fos);
-            Corriente nuevo = (Corriente) ois.readObject();
+            MasterCard nuevo = (MasterCard) ois.readObject();
             this.setBalance(nuevo.getBalance());
             this.setClient(nuevo.getClient());
             ois.close();
@@ -59,7 +62,7 @@ public class Corriente extends Cuenta {
 @Override
     public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
-        Corriente clon = (Corriente) clone();
+        MasterCard clon = (MasterCard) clone();
         System.out.println("Se crea un clon con balance "+ clon.getBalance());
         clon.returnToState(tId);
         try {
@@ -77,7 +80,7 @@ public class Corriente extends Cuenta {
 
     @Override
     public Long retirar(Long cantidad, Transaction tId) {
-        Corriente clon = (Corriente) clone();
+        MasterCard clon = (MasterCard) clone();
         System.out.println("Se crea un clon con balance "+ clon.getBalance());
         clon.returnToState(tId);
         boolean ok = false;
@@ -107,5 +110,7 @@ public class Corriente extends Cuenta {
             }
         }
     }
+
+ 
     
 }

@@ -13,11 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import bloqueo.Bloqueo;
-import coordinator.Coordinator;
-import coordinator.ICoordinator;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import transaccion.Action;
 import transaccion.Transaction;
 
@@ -26,10 +21,6 @@ import transaccion.Transaction;
  * @author esparratacus
  */
 public class Ahorro extends Cuenta {
-    
-    
-    
-    
 
     public Long getBalance() {
         return balance;
@@ -47,11 +38,12 @@ public class Ahorro extends Cuenta {
     public void setClient(Client client) {
         this.client = client;
     }
-    
-    public Ahorro(){
+
+    public Ahorro() {
         super();
         balance = new Long(0);
     }
+
     @Override
     public Boolean commit(Long tId) {
         FileOutputStream fout = null;
@@ -78,9 +70,10 @@ public class Ahorro extends Cuenta {
             }
         }
     }
+
     @Override
     public String getResourceId() {
-        return Banco.BANCO_AHORRO+ "_" + client.getId();
+        return Banco.BANCO_AHORRO + "_" + client.getId();
     }
 
     @Override
@@ -106,10 +99,10 @@ public class Ahorro extends Cuenta {
                 fos.close();
             } catch (IOException ex) {
                 Logger.getLogger(Ahorro.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
+            } finally {
                 return false;
             }
-         
+
         }
     }
 
@@ -117,35 +110,35 @@ public class Ahorro extends Cuenta {
     public Long abonar(Long cantidad, Transaction tId) {
         boolean ok = false;
         Ahorro clon = (Ahorro) clone();
-        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        System.out.println("Se crea un clon con balance " + clon.getBalance());
         clon.returnToState(tId);
         try {
             ok = true;
-            System.out.println("despues de la operacion el clon tiene "+ clon.getBalance());
+            System.out.println("despues de la operacion el clon tiene " + clon.getBalance());
             return clon.getBalance();
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
             ok = false;
-        }finally {
-            return ok? clon.getBalance() : null;
+        } finally {
+            return ok ? clon.getBalance() : null;
         }
     }
 
     @Override
     public Long retirar(Long cantidad, Transaction tId) {
         Ahorro clon = (Ahorro) clone();
-        System.out.println("Se crea un clon con balance "+ clon.getBalance());
+        System.out.println("Se crea un clon con balance " + clon.getBalance());
         clon.returnToState(tId);
         boolean ok = false;
         try {
             ok = true;
             return clon.getBalance();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             ok = false;
-        }finally {
-            return ok? clon.getBalance() : null;
+        } finally {
+            return ok ? clon.getBalance() : null;
         }
     }
 
@@ -153,15 +146,16 @@ public class Ahorro extends Cuenta {
     public void returnToState(Transaction t) {
         System.out.println("Recuperando transaccion");
         for (Action action : t.getAcciones()) {
-            if(action.isOperacion() == Action.SUMA){
-                System.out.println("sumo " + action.getCantidad());
-                balance += action.getCantidad();
-            }else{
-                System.out.println("resto " + action.getCantidad());
-                balance -= action.getCantidad();
+            if (action.getRecursoAfectado().equals(getResourceId())) {
+                if (action.isOperacion() == Action.SUMA) {
+                    System.out.println("sumo " + action.getCantidad());
+                    balance += action.getCantidad();
+                } else {
+                    System.out.println("resto " + action.getCantidad());
+                    balance -= action.getCantidad();
+                }
             }
         }
     }
 
-   
 }

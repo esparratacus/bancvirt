@@ -5,6 +5,7 @@
  */
 package bancvirt;
 
+import coordinator.Coordinator;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -34,7 +35,7 @@ public class MainBanco {
                 banco = new Banco(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ]);
                 banco.setTipo(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ]);
             }
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
+            Registry registry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
             registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
             System.out.println("Banco " + Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1] + " corriendo");
         } catch (RemoteException ex) {

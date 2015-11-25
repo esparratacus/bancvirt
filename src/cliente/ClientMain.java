@@ -52,7 +52,7 @@ public class ClientMain {
      */
     public static void main(String[] args) {
         try {
-            Registry myRegistry = LocateRegistry.getRegistry("127.0.0.1", 1099);
+            Registry myRegistry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
             ICoordinator coordinador = (ICoordinator) myRegistry.lookup(Coordinator.COORDINATOR_NAME);
             Scanner sc = new Scanner(System.in);
             System.out.println("Ingrese su id de cliente");
@@ -73,6 +73,12 @@ public class ClientMain {
                     case "2":
                         idRecurso = Banco.BANCO_CORRIENTE;
                         break;
+                    case "3":
+                        idRecurso = Banco.VISA;
+                        break;
+                    case "4":
+                        idRecurso = Banco.MASTER_CARD;
+                        break;
                     case "5":
                         coordinador.abortTransaction(tId);
                         System.out.println("Indeciso");
@@ -82,6 +88,9 @@ public class ClientMain {
                         coordinador.closeTransaction(tId);
                         System.out.println("Gracias por venir :) ");
                         System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Opcion no disponible");
                         break;
                 }
                 String escoge = escoge();
