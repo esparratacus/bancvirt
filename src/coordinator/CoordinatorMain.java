@@ -6,11 +6,15 @@
 package coordinator;
 
 import bancvirt.Banco;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import prueba.recordFromHost;
+import prueba.recordFromHostImpl;
 
 /**
  *
@@ -26,7 +30,12 @@ public class CoordinatorMain {
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind(Coordinator.COORDINATOR_NAME, new Coordinator(registry));
             System.out.println("Service running");
+            String name = "recordFromHost";
+            recordFromHost myObj = new recordFromHostImpl ();
+            registry.bind(name, myObj);
         } catch (RemoteException ex) {
+            Logger.getLogger(CoordinatorMain.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AlreadyBoundException ex) {
             Logger.getLogger(CoordinatorMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
