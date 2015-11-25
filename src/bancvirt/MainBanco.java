@@ -42,7 +42,7 @@ public class MainBanco {
             Registry registry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
            // Registry registry = LocateRegistry.createRegistry(1099);
             recordFromHost  myRecord  = (recordFromHost) registry.lookup("recordFromHost");
-            myRecord.recordObject("myRemoteObject", banco );
+            myRecord.recordObject(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ], banco );
             //registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
             System.out.println("Banco " + Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1] + " corriendo");
         } catch (RemoteException ex) {

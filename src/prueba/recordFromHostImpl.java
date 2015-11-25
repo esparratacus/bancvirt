@@ -25,7 +25,7 @@ public class recordFromHostImpl extends UnicastRemoteObject implements recordFro
        int ret=0;
         try {
             Registry registry = LocateRegistry.getRegistry();
-            registry.bind(name, obj);
+            registry.rebind(name, obj);
         } catch (Exception e) {
             System.err.println("recordObject exception:");
             e.printStackTrace();
