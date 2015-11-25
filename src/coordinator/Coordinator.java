@@ -13,11 +13,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import transaccion.Action;
@@ -32,7 +32,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     public final static String COORDINATOR_IP = "127.0.0.1";
     private Registry registry;
     private Long totalTransactions;
-    private HashMap<Long, Transaction> transactions;
+    private ConcurrentHashMap<Long, Transaction> transactions;
     public final static String VISA_IP="";
     public final static String MASTER_IP="";
     public final static String AHORRO_IP="";
@@ -63,7 +63,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
     public Coordinator(Registry registry) throws RemoteException {
         this.registry = registry;
         totalTransactions = new Long(0);
-        transactions = new HashMap<>();
+        transactions = new ConcurrentHashMap<>();
     }
 
     public Transaction createTransaction() {
@@ -79,7 +79,7 @@ public class Coordinator extends UnicastRemoteObject implements ICoordinator {
         String[] banks = registry.list();
         for (String bank : banks) {
             System.out.println(bank);
-            if (!bank.equals(COORDINATOR_NAME)) {
+            if (!bank.equals(COORDINATOR_NAME) && !bank.equals("recordFromHost")) {
                 try {
                     
                     IBanco banco = (IBanco) registry.lookup(bank);

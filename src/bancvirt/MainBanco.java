@@ -6,12 +6,15 @@
 package bancvirt;
 
 import coordinator.Coordinator;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import prueba.recordFromHost;
 
 /**
  *
@@ -38,9 +41,13 @@ public class MainBanco {
             }
             Registry registry = LocateRegistry.getRegistry(Coordinator.COORDINATOR_IP, 1099);
            // Registry registry = LocateRegistry.createRegistry(1099);
-            registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
+            recordFromHost  myRecord  = (recordFromHost) registry.lookup("recordFromHost");
+            myRecord.recordObject(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1 ], banco );
+            //registry.rebind(Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1], banco);
             System.out.println("Banco " + Banco.TIPOS_BANCO[ Integer.parseInt(idBanco) - 1] + " corriendo");
         } catch (RemoteException ex) {
+            Logger.getLogger(MainBanco.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotBoundException ex) {
             Logger.getLogger(MainBanco.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
